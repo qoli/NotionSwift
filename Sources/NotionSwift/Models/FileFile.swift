@@ -7,6 +7,7 @@ import Foundation
 public enum FileFile {
     case external(url: String)
     case file(url: String, expiryTime: Date)
+    case fileUpload(id: String)
     case unknown(typeName: String)
 }
 
@@ -15,6 +16,7 @@ extension FileFile: Codable {
         case type
         case external
         case file
+        case file_upload
     }
 
     private struct _ExternalFileLink: Codable {
@@ -37,6 +39,13 @@ extension FileFile: Codable {
         } else if type == CodingKeys.file.rawValue {
             let value = try container.decode(_FileLink.self, forKey: .file)
             self = .file(url: value.url, expiryTime: value.expiry_time)
+        } else if type == "file_upload" {
+            let value = try container.decode([String: String].self, forKey: .file_upload)
+            if let id = value["id"] {
+                self = .fileUpload(id: id)
+            } else {
+                self = .unknown(typeName: type)
+            }
         } else {
             self = .unknown(typeName: type)
         }
@@ -51,6 +60,9 @@ extension FileFile: Codable {
         case let .file(url, expiryTime):
             try container.encode(CodingKeys.file.rawValue, forKey: .type)
             try container.encode(_FileLink(url: url, expiry_time: expiryTime), forKey: .file)
+        case let .fileUpload(id):
+            try container.encode("file_upload", forKey: .type)
+            try container.encode(["id": id], forKey: .file_upload)
         case .unknown:
             break
         }

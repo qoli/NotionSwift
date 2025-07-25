@@ -97,7 +97,9 @@ public class DefaultNetworkClient: NetworkClient {
             completed(.failure(.bodyEncodingError(error)))
             return
         }
-        Environment.log.trace("BODY:\n " + String(data: requestBody, encoding: .utf8)!)
+        if let jsonString = String(data: requestBody, encoding: .utf8) {
+            print("Request JSON:\n\(jsonString)")
+        }
         request.httpBody = requestBody
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
 
@@ -120,8 +122,9 @@ public class DefaultNetworkClient: NetworkClient {
             return
         }
 
-        Environment.log.trace("BODY:\n " + String(data: requestBody, encoding: .utf8)!)
-
+        if let jsonString = String(data: requestBody, encoding: .utf8) {
+            print("Request JSON:\n\(jsonString)")
+        }
         request.httpBody = requestBody
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
 
@@ -163,8 +166,9 @@ public class DefaultNetworkClient: NetworkClient {
                 return
             }
 
-            Environment.log.trace("BODY:\n " + String(data: requestBody, encoding: .utf8)!)
-
+            if let jsonString = String(data: requestBody, encoding: .utf8) {
+                print("Request JSON:\n\(jsonString)")
+            }
             request.httpBody = requestBody
         }
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
